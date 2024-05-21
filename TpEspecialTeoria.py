@@ -221,11 +221,7 @@ def ordenUno(vectorEstacionario):
     return S
 
 
-# Ejecutar el algoritmo de Huffman
-resultado = huffman.huffman(ordenUno(vectorEstacionarioVa))
-# Imprimir los códigos de Huffman resultantes
-print(resultado)
-huffman.codigos = {}
+
 
 def extensionOrdenDos(vectorEstacionario, matrizTransicion):   
     S = [
@@ -241,8 +237,15 @@ def extensionOrdenDos(vectorEstacionario, matrizTransicion):
     ]    
     return S
 
-resultadoDos = huffman.huffman(extensionOrdenDos(vectorEstacionarioVa,matrizTransicionVa))
-print(resultadoDos)
+def impresionCodigoS1(vectorEstacionario):
+    huffman.codigos = {}
+    resultado = huffman.huffman(ordenUno(vectorEstacionario))
+    return resultado
+
+def impresionCodigoS2(vectorEstacionario, matrizTransicion):
+    huffman.codigos = {}
+    resultadoDos = huffman.huffman(extensionOrdenDos(vectorEstacionario,matrizTransicion))
+    return resultadoDos
 
 def longitudMedia(simbolosProb, codificaciones):
     suma = 0
@@ -256,14 +259,35 @@ def longitudMedia(simbolosProb, codificaciones):
         long_media = long_media + (suma * simbolosProbDict[simbolo])
     return long_media
 
-# Ejemplo de uso
-simbolosOrdenUno = ordenUno(vectorEstacionarioBa)
-print(simbolosOrdenUno)
-simbolosOrdenDos = extensionOrdenDos(vectorEstacionarioBa, matrizTransicionBa)
-print(simbolosOrdenDos)
+def impresionLongitudMedia(vectorEstacionario, matrizTransicion):
+    huffman.codigos = {}
+    resultado = huffman.huffman(ordenUno(vectorEstacionario))
+    huffman.codigos = {}
+    resultadoDos = huffman.huffman(extensionOrdenDos(vectorEstacionario,matrizTransicion))
+    simbolosOrdenUno = ordenUno(vectorEstacionario)
+    simbolosOrdenDos = extensionOrdenDos(vectorEstacionario, matrizTransicion)
 
-print('longitudMediaOrdenUno: ' + str(longitudMedia(simbolosOrdenUno, resultado)))
-print('longitudMediaOrdenDos: ' + str(longitudMedia(simbolosOrdenDos, resultadoDos)))
+    return "Longitud Media: " + str(longitudMedia(simbolosOrdenUno, resultado)) +"\nLongitud Media Orden Dos: "+ str(longitudMedia(simbolosOrdenDos, resultadoDos))
 
 
+print('\nBuenos Aires: ')
+print("Codigos S1")
+print(impresionCodigoS1(vectorEstacionarioBa))
+print("Codigos S2")
+print(impresionCodigoS2(vectorEstacionarioBa, matrizTransicionBa))
+print(impresionLongitudMedia(vectorEstacionarioBa, matrizTransicionBa))
+
+print('\nBogota: ')
+print("Codigos S1")
+print(impresionCodigoS1(vectorEstacionarioBo))
+print("Codigos S2")
+print(impresionCodigoS2(vectorEstacionarioBo, matrizTransicionBo))
+print(impresionLongitudMedia(vectorEstacionarioBo, matrizTransicionBo))
+
+print('\nVancouver: ')
+print("Codigos S1")
+print(impresionCodigoS1(vectorEstacionarioVa))
+print("Codigos S2")
+print(impresionCodigoS2(vectorEstacionarioVa, matrizTransicionVa))
+print(impresionLongitudMedia(vectorEstacionarioVa, matrizTransicionVa))
 

@@ -52,8 +52,8 @@ datos3 = leer_csv(archivo_csv3)
 medias = [calcular_media(datos) for datos in [datos1, datos2, datos3]]
 desvios = [calcular_desvio(datos, media) for datos, media in zip([datos1, datos2, datos3], medias)]
 
-#print("Medias de cada señal:", medias)
-#print("Desvíos estándar de cada señal:", desvios)
+print("Medias de cada señal:", medias)
+print("Desvíos estándar de cada señal:", desvios)
 
 # Función para calcular la correlación cruzada entre dos conjuntos de datos
 def calcular_correlacion(senal1, senal2):
@@ -80,7 +80,7 @@ for i in range(num_senales):
         correlacion[i][j] = calcular_correlacion(datos[i], datos[j])
         correlacion[j][i] = correlacion[i][j]
 
-
+print("correlacion: \n", correlacion)
 
 #EJERCICIO 2:
 
@@ -199,13 +199,14 @@ def Hcondicional(matrizTransicion, vectorEst):
             if matrizTransicion[j, i] != 0:
                 entropiaMemAux += matrizTransicion[j, i] * np.log2(matrizTransicion[j, i])        
         entropiaMem += -entropiaMemAux * vectorEst[i]
+    print(entropiaMem)
     return entropiaMem
 
-entropiaConMem = Hcondicional(matrizTransicionBa, vectorEstacionarioBa) + calcularEntropiaH1(vectorEstacionarioBa)
+entropiaConMem = Hcondicional(matrizTransicionBa, vectorEstacionarioBa)
 print('Entropia con memoria Ba: ' + str(entropiaConMem))
-entropiaConMem = Hcondicional(matrizTransicionBo, vectorEstacionarioBo) + calcularEntropiaH1(vectorEstacionarioBo)
+entropiaConMem = Hcondicional(matrizTransicionBo, vectorEstacionarioBo)
 print('Entropia con memoria Bogota: ' + str(entropiaConMem))
-entropiaConMem = Hcondicional(matrizTransicionVa, vectorEstacionarioVa) + calcularEntropiaH1(vectorEstacionarioVa)
+entropiaConMem = Hcondicional(matrizTransicionVa, vectorEstacionarioVa) 
 print('Entropia con memoria Vancouver: ' + str(entropiaConMem))
 
 

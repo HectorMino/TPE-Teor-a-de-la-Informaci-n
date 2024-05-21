@@ -220,13 +220,6 @@ def ordenUno(vectorEstacionario):
     ]
     return S
 
-
-# Ejecutar el algoritmo de Huffman
-resultado = huffman.huffman(ordenUno(vectorEstacionarioVa))
-# Imprimir los códigos de Huffman resultantes
-print(resultado)
-huffman.codigos = {}
-
 def extensionOrdenDos(vectorEstacionario, matrizTransicion):   
     S = [
         {'simbolo': 'BB', 'probabilidad': vectorEstacionario[0] * matrizTransicion[0,0]},
@@ -240,10 +233,6 @@ def extensionOrdenDos(vectorEstacionario, matrizTransicion):
         {'simbolo': 'AA', 'probabilidad': vectorEstacionario[2] * matrizTransicion[2,2]},
     ]    
     return S
-
-resultadoDos = huffman.huffman(extensionOrdenDos(vectorEstacionarioVa,matrizTransicionVa))
-print(resultadoDos)
-
 def longitudMedia(simbolosProb, codificaciones):
     suma = 0
     long_media = 0
@@ -256,14 +245,62 @@ def longitudMedia(simbolosProb, codificaciones):
         long_media = long_media + (suma * simbolosProbDict[simbolo])
     return long_media
 
-# Ejemplo de uso
+
+# --------IMPRESIONES HUFFMAN BUENOS AIRES------------------------
+resultado = huffman.huffman(ordenUno(vectorEstacionarioBa))
+print('Codificacion orden 1 Buenos Aires')
+print(resultado)
+huffman.codigos = {}
+resultadoDos = huffman.huffman(extensionOrdenDos(vectorEstacionarioBa,matrizTransicionBa))
+print('Codificacion orden 2 Buenos Aires')
+print(resultadoDos)
+huffman.codigos = {}
 simbolosOrdenUno = ordenUno(vectorEstacionarioBa)
 print(simbolosOrdenUno)
 simbolosOrdenDos = extensionOrdenDos(vectorEstacionarioBa, matrizTransicionBa)
 print(simbolosOrdenDos)
+print('longitudMediaOrdenUno Buenos Aires: ' + str(longitudMedia(simbolosOrdenUno, resultado)))
+print('longitudMediaOrdenDos Buenos Aires: ' + str(longitudMedia(simbolosOrdenDos, resultadoDos)))
+# --------IMPRESIONES HUFFMAN BOGOTA------------------------
+resultado = huffman.huffman(ordenUno(vectorEstacionarioBo))
+print('Codificacion orden 1 Bogota')
+print(resultado)
+huffman.codigos = {}
+resultadoDos = huffman.huffman(extensionOrdenDos(vectorEstacionarioBo,matrizTransicionBo))
+print('Codificacion orden 2 Bogota')
+print(resultadoDos)
+huffman.codigos = {}
+simbolosOrdenUno = ordenUno(vectorEstacionarioBo)
+print(simbolosOrdenUno)
+simbolosOrdenDos = extensionOrdenDos(vectorEstacionarioBo, matrizTransicionBo)
+print(simbolosOrdenDos)
+print('longitudMediaOrdenUno Bogota: ' + str(longitudMedia(simbolosOrdenUno, resultado)))
+print('longitudMediaOrdenDos Bogota: ' + str(longitudMedia(simbolosOrdenDos, resultadoDos)))
+#---------------IMPRESIONES HUFFMAN VANCOUVER-------------------
+resultado = huffman.huffman(ordenUno(vectorEstacionarioVa))
+print('Codificacion orden 1 Vancouver')
+print(resultado)
+huffman.codigos = {}
+resultadoDos = huffman.huffman(extensionOrdenDos(vectorEstacionarioVa,matrizTransicionVa))
+print('Codificacion orden 2 Vancouver')
+print(resultadoDos)
+huffman.codigos = {}
+simbolosOrdenUno = ordenUno(vectorEstacionarioVa)
+print(simbolosOrdenUno)
+simbolosOrdenDos = extensionOrdenDos(vectorEstacionarioVa, matrizTransicionVa)
+print(simbolosOrdenDos)
+print('longitudMediaOrdenUno Vancouver: ' + str(longitudMedia(simbolosOrdenUno, resultado)))
+print('longitudMediaOrdenDos Vancouver: ' + str(longitudMedia(simbolosOrdenDos, resultadoDos)))
 
-print('longitudMediaOrdenUno: ' + str(longitudMedia(simbolosOrdenUno, resultado)))
-print('longitudMediaOrdenDos: ' + str(longitudMedia(simbolosOrdenDos, resultadoDos)))
+
+
+
+
+
+
+
+
+
 
 
 

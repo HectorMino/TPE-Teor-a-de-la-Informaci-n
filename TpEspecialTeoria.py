@@ -3,6 +3,7 @@ import math
 import pandas as pd
 import numpy as np
 import vectorEstacionario
+import huffman
 
 def calcular_media(numeros):
     suma = sum(numeros)
@@ -208,5 +209,61 @@ entropiaConMem = Hcondicional(matrizTransicionBo, vectorEstacionarioBo)
 print('Entropia con memoria Bogota: ' + str(entropiaConMem))
 entropiaConMem = Hcondicional(matrizTransicionVa, vectorEstacionarioVa) 
 print('Entropia con memoria Vancouver: ' + str(entropiaConMem))
+
+
+
+def ordenUno(vectorEstacionario):  
+    S = [
+        {'simbolo': 'B', 'probabilidad': vectorEstacionario[0]},
+        {'simbolo': 'M', 'probabilidad': vectorEstacionario[1]},
+        {'simbolo': 'A', 'probabilidad': vectorEstacionario[2]}
+    ]
+    return S
+
+
+# Ejecutar el algoritmo de Huffman
+resultado = huffman.huffman(ordenUno(vectorEstacionarioVa))
+# Imprimir los códigos de Huffman resultantes
+print(resultado)
+huffman.codigos = {}
+
+def extensionOrdenDos(vectorEstacionario, matrizTransicion):   
+    S = [
+        {'simbolo': 'BB', 'probabilidad': vectorEstacionario[0] * matrizTransicion[0,0]},
+        {'simbolo': 'BM', 'probabilidad': vectorEstacionario[0] * matrizTransicion[1,0]},
+        {'simbolo': 'BA', 'probabilidad': vectorEstacionario[0] * matrizTransicion[2,0]},
+        {'simbolo': 'MB', 'probabilidad': vectorEstacionario[1] * matrizTransicion[0,1]},
+        {'simbolo': 'MM', 'probabilidad': vectorEstacionario[1] * matrizTransicion[1,1]},
+        {'simbolo': 'MA', 'probabilidad': vectorEstacionario[1] * matrizTransicion[2,1]},
+        {'simbolo': 'AB', 'probabilidad': vectorEstacionario[2] * matrizTransicion[0,2]},
+        {'simbolo': 'AM', 'probabilidad': vectorEstacionario[2] * matrizTransicion[1,2]},
+        {'simbolo': 'AA', 'probabilidad': vectorEstacionario[2] * matrizTransicion[2,2]},
+    ]    
+    return S
+
+resultadoDos = huffman.huffman(extensionOrdenDos(vectorEstacionarioVa,matrizTransicionVa))
+print(resultadoDos)
+
+def longitudMedia(simbolosProb, codificaciones):
+    suma = 0
+    long_media = 0
+    # Crear un diccionario para acceder rápidamente a las probabilidades por símbolo
+    simbolosProbDict = {item['simbolo']: item['probabilidad'] for item in simbolosProb}
+    
+    for simbolo, codigo in codificaciones.items():   
+        suma = len(codigo)    
+        # Acceder a la probabilidad usando el diccionario
+        long_media = long_media + (suma * simbolosProbDict[simbolo])
+    return long_media
+
+# Ejemplo de uso
+simbolosOrdenUno = ordenUno(vectorEstacionarioBa)
+print(simbolosOrdenUno)
+simbolosOrdenDos = extensionOrdenDos(vectorEstacionarioBa, matrizTransicionBa)
+print(simbolosOrdenDos)
+
+print('longitudMediaOrdenUno: ' + str(longitudMedia(simbolosOrdenUno, resultado)))
+print('longitudMediaOrdenDos: ' + str(longitudMedia(simbolosOrdenDos, resultadoDos)))
+
 
 

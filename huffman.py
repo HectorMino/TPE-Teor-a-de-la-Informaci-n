@@ -24,8 +24,9 @@ def huffman(S):
     
     # Creación de nodos e insertado
     for simbolo in S:
-        nodo = Nodo(simbolo['probabilidad'], simbolo['simbolo'])
-        nodos.append(nodo)
+        if (simbolo['probabilidad'] != 0):     #If para descartar nodos cuya probabilidad es cero (Caso bogota)
+            nodo = Nodo(simbolo['probabilidad'], simbolo['simbolo'])
+            nodos.append(nodo)
     
     # Mientras haya más de un nodo en la lista de nodos
     while len(nodos) > 1:
@@ -50,20 +51,6 @@ def huffman(S):
     # El algoritmo finaliza cuando se llega al nodo raíz con probabilidad 1
     return calculateCodes(nodos[0])
 
-# Conjunto de señales (ejemplo)
-S = [
-    {'simbolo': 'a', 'probabilidad': 0.45},
-    {'simbolo': 'b', 'probabilidad': 0.13},
-    {'simbolo': 'c', 'probabilidad': 0.12},
-    {'simbolo': 'd', 'probabilidad': 0.16},
-    {'simbolo': 'e', 'probabilidad': 0.14}
-]
-
 # Arreglo que almacena el árbol de Huffman resultante
 codigos = {}
 
-# Ejecutar el algoritmo de Huffman
-resultado = huffman(S)
-
-# Imprimir los códigos de Huffman resultantes
-print(resultado)

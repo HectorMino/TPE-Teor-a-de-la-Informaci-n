@@ -220,6 +220,9 @@ def ordenUno(vectorEstacionario):
     ]
     return S
 
+
+
+
 def extensionOrdenDos(vectorEstacionario, matrizTransicion):   
     S = [
         {'simbolo': 'BB', 'probabilidad': vectorEstacionario[0] * matrizTransicion[0,0]},
@@ -233,6 +236,17 @@ def extensionOrdenDos(vectorEstacionario, matrizTransicion):
         {'simbolo': 'AA', 'probabilidad': vectorEstacionario[2] * matrizTransicion[2,2]},
     ]    
     return S
+
+def impresionCodigoS1(vectorEstacionario):
+    huffman.codigos = {}
+    resultado = huffman.huffman(ordenUno(vectorEstacionario))
+    return resultado
+
+def impresionCodigoS2(vectorEstacionario, matrizTransicion):
+    huffman.codigos = {}
+    resultadoDos = huffman.huffman(extensionOrdenDos(vectorEstacionario,matrizTransicion))
+    return resultadoDos
+
 def longitudMedia(simbolosProb, codificaciones):
     suma = 0
     long_media = 0
@@ -245,62 +259,166 @@ def longitudMedia(simbolosProb, codificaciones):
         long_media = long_media + (suma * simbolosProbDict[simbolo])
     return long_media
 
+def impresionLongitudMedia(vectorEstacionario, matrizTransicion):
+    huffman.codigos = {}
+    resultado = huffman.huffman(ordenUno(vectorEstacionario))
+    huffman.codigos = {}
+    resultadoDos = huffman.huffman(extensionOrdenDos(vectorEstacionario,matrizTransicion))
+    simbolosOrdenUno = ordenUno(vectorEstacionario)
+    simbolosOrdenDos = extensionOrdenDos(vectorEstacionario, matrizTransicion)
 
-# --------IMPRESIONES HUFFMAN BUENOS AIRES------------------------
+    return "Longitud Media: " + str(longitudMedia(simbolosOrdenUno, resultado)) +"\nLongitud Media Orden Dos: "+ str(longitudMedia(simbolosOrdenDos, resultadoDos))
+
+
+print('\nBuenos Aires: ')
+print("Codigos S1")
+print(impresionCodigoS1(vectorEstacionarioBa))
+print("Codigos S2")
+print(impresionCodigoS2(vectorEstacionarioBa, matrizTransicionBa))
+print(impresionLongitudMedia(vectorEstacionarioBa, matrizTransicionBa))
+
+print('\nBogota: ')
+print("Codigos S1")
+print(impresionCodigoS1(vectorEstacionarioBo))
+print("Codigos S2")
+print(impresionCodigoS2(vectorEstacionarioBo, matrizTransicionBo))
+print(impresionLongitudMedia(vectorEstacionarioBo, matrizTransicionBo))
+
+print('\nVancouver: ')
+print("Codigos S1")
+print(impresionCodigoS1(vectorEstacionarioVa))
+print("Codigos S2")
+print(impresionCodigoS2(vectorEstacionarioVa, matrizTransicionVa))
+print(impresionLongitudMedia(vectorEstacionarioVa, matrizTransicionVa))
+
+
+
+
+def longBitsOrdenUno(nombre_archivo):
+    cantB = 0
+    cantM = 0
+    cantA = 0
+    df = pd.read_csv(nombre_archivo, header=None, names=['estado'])   
+    for i in range(len(df['estado'])):
+        estado_actual = df['estado'][i]
+        if (estado_actual == 'B'):
+            cantB += 1
+        elif(estado_actual == 'M'):
+            cantM += 1
+        else:
+            cantA += 1
+    return cantB, cantM, cantA
+
+cantB_BuenosAires,cantM_BuenosAires,cantA_BuenosAires = longBitsOrdenUno('S1_buenosAires_categorizadas.csv')
+print('cantB: '+str(cantB_BuenosAires) + ' cantM: '+str(cantM_BuenosAires) + ' cant A: '+str(cantA_BuenosAires))
+
+cantB_Bogota,cantM_Bogota,cantA_Bogota = longBitsOrdenUno('S2_bogota_categorizadas.csv')
+print('cantB: '+str(cantB_Bogota) + ' cantM: '+str(cantM_Bogota) + ' cant A: '+str(cantA_Bogota))
+
+cantB_Vancouver,cantM_Vancouver,cantA_Vancouver = longBitsOrdenUno('S3_vancouver_categorizadas.csv')
+print('cantB: '+str(cantB_Vancouver) + ' cantM: '+str(cantM_Vancouver) + ' cant A: '+str(cantA_Vancouver))
+
+
+def longBitsOrdenDos(nombre_archivo):
+    cantBB = 0
+    cantBM = 0
+    cantBA = 0
+    cantMB = 0
+    cantMM = 0
+    cantMA = 0
+    cantAB = 0
+    cantAM = 0
+    cantAA = 0
+    
+    df = pd.read_csv(nombre_archivo, header=None, names=['estado'])    
+    
+    for i in range(0, len(df['estado'])-1, 2):
+        estado_actual = df['estado'][i]
+        estado_siguiente = df['estado'][i+1]   
+        
+        if estado_actual == 'B':
+            if estado_siguiente == 'B':
+                cantBB += 1
+            elif estado_siguiente == 'M':
+                cantBM += 1
+            else:
+                cantBA += 1
+        elif estado_actual == 'M':
+            if estado_siguiente == 'B':
+                cantMB += 1
+            elif estado_siguiente == 'M':
+                cantMM += 1
+            else:
+                cantMA += 1
+        else:
+            if estado_siguiente == 'B':
+                cantAB += 1
+            elif estado_siguiente == 'M':
+                cantAM += 1
+            else:
+                cantAA += 1
+    
+    return cantBB, cantBM, cantBA, cantMB, cantMM, cantMA, cantAB, cantAM, cantAA
+
+cantBB_BuenosAires, cantBM_BuenosAires, cantBA_BuenosAires, cantMB_BuenosAires, cantMM_BuenosAires, cantMA_BuenosAires, cantAB_BuenosAires, cantAM_BuenosAires, cantAA_BuenosAires = longBitsOrdenDos('S1_buenosAires_categorizadas.csv')
+print('cantBB:', cantBB_BuenosAires, 'cantBM:', cantBM_BuenosAires, 'cantBA:', cantBA_BuenosAires, 'cantMB:', cantMB_BuenosAires, 'cantMM:', cantMM_BuenosAires, 'cantMA:', cantMA_BuenosAires, 'cantAB:', cantAB_BuenosAires, 'cantAM:', cantAM_BuenosAires, 'cantAA:', cantAA_BuenosAires)
+
+cantBB_Bogota, cantBM_Bogota, cantBA_Bogota, cantMB_Bogota, cantMM_Bogota, cantMA_Bogota, cantAB_Bogota, cantAM_Bogota, cantAA_Bogota = longBitsOrdenDos('S2_bogota_categorizadas.csv')
+print('cantBB:', cantBB_Bogota, 'cantBM:', cantBM_Bogota, 'cantBA:', cantBA_Bogota, 'cantMB:', cantMB_Bogota, 'cantMM:', cantMM_Bogota, 'cantMA:', cantMA_Bogota, 'cantAB:', cantAB_Bogota, 'cantAM:', cantAM_Bogota, 'cantAA:', cantAA_Bogota)
+
+cantBB_Vancouver, cantBM_Vancouver, cantBA_Vancouver, cantMB_Vancouver, cantMM_Vancouver, cantMA_Vancouver, cantAB_Vancouver, cantAM_Vancouver, cantAA_Vancouver = longBitsOrdenDos('S3_vancouver_categorizadas.csv')
+print('cantBB:', cantBB_Vancouver, 'cantBM:', cantBM_Vancouver, 'cantBA:', cantBA_Vancouver, 'cantMB:', cantMB_Vancouver, 'cantMM:', cantMM_Vancouver, 'cantMA:', cantMA_Vancouver, 'cantAB:', cantAB_Vancouver, 'cantAM:', cantAM_Vancouver, 'cantAA:', cantAA_Vancouver)
+
+def teoremaShannonSinMemoria(logMedia,cantMuestra,h1):
+    #print(h1+'<'+logMedia/cantMuestra+'<'+(h1+1/cantMuestra))
+    if(h1<logMedia/cantMuestra<h1+1/cantMuestra):
+        return True
+    return False
+
+def teoremaShannonMemoria(hCond,logMedia,cantMuestra,h1):
+    desigualdadIzq= h1/cantMuestra+(1-1/cantMuestra)*hCond
+    desigualdadDer=h1/cantMuestra+(1-1/cantMuestra)*hCond+1/cantMuestra
+    #print(desigualdadIzq+'<='+logMedia/cantMuestra+'<'+desigualdadDer)
+    if(desigualdadIzq<logMedia/cantMuestra<desigualdadDer):
+        return True
+    return False
+        
+#---------------------------CORROBORANDO SHANNON SIN MEMORIA------------------------#
+print("Shannon sin memoria")
+print("Shannon Buenos aires")
+huffman.codigos = {}
 resultado = huffman.huffman(ordenUno(vectorEstacionarioBa))
-print('Codificacion orden 1 Buenos Aires')
 print(resultado)
+longmediaBa=longitudMedia(ordenUno(vectorEstacionarioBa), resultado)  
+print(teoremaShannonSinMemoria(longmediaBa,1,calcularEntropiaH1(matrizSinMemoriaBa)))      
+print("Shannon Bogota")
 huffman.codigos = {}
-resultadoDos = huffman.huffman(extensionOrdenDos(vectorEstacionarioBa,matrizTransicionBa))
-print('Codificacion orden 2 Buenos Aires')
-print(resultadoDos)
-huffman.codigos = {}
-simbolosOrdenUno = ordenUno(vectorEstacionarioBa)
-print(simbolosOrdenUno)
-simbolosOrdenDos = extensionOrdenDos(vectorEstacionarioBa, matrizTransicionBa)
-print(simbolosOrdenDos)
-print('longitudMediaOrdenUno Buenos Aires: ' + str(longitudMedia(simbolosOrdenUno, resultado)))
-print('longitudMediaOrdenDos Buenos Aires: ' + str(longitudMedia(simbolosOrdenDos, resultadoDos)))
-# --------IMPRESIONES HUFFMAN BOGOTA------------------------
 resultado = huffman.huffman(ordenUno(vectorEstacionarioBo))
-print('Codificacion orden 1 Bogota')
 print(resultado)
+longmediaBo=longitudMedia(ordenUno(vectorEstacionarioBo), resultado)  
+print(teoremaShannonSinMemoria(longmediaBo,1,calcularEntropiaH1(matrizSinMemoriaBo))) 
+print("Shannon Vancouver")
 huffman.codigos = {}
-resultadoDos = huffman.huffman(extensionOrdenDos(vectorEstacionarioBo,matrizTransicionBo))
-print('Codificacion orden 2 Bogota')
-print(resultadoDos)
-huffman.codigos = {}
-simbolosOrdenUno = ordenUno(vectorEstacionarioBo)
-print(simbolosOrdenUno)
-simbolosOrdenDos = extensionOrdenDos(vectorEstacionarioBo, matrizTransicionBo)
-print(simbolosOrdenDos)
-print('longitudMediaOrdenUno Bogota: ' + str(longitudMedia(simbolosOrdenUno, resultado)))
-print('longitudMediaOrdenDos Bogota: ' + str(longitudMedia(simbolosOrdenDos, resultadoDos)))
-#---------------IMPRESIONES HUFFMAN VANCOUVER-------------------
 resultado = huffman.huffman(ordenUno(vectorEstacionarioVa))
-print('Codificacion orden 1 Vancouver')
 print(resultado)
+longmediaVa=longitudMedia(ordenUno(vectorEstacionarioVa), resultado)  
+print(teoremaShannonSinMemoria(longmediaVa,1,calcularEntropiaH1(matrizSinMemoriaVa)))
+print('\n')
+#--------------------------------CORROBORANDO SHANNON CON MEMORIA (y orden 2)-----------------------
+print("Shannon con memoria")
+print("Shannon Buenos aires")
 huffman.codigos = {}
-resultadoDos = huffman.huffman(extensionOrdenDos(vectorEstacionarioVa,matrizTransicionVa))
-print('Codificacion orden 2 Vancouver')
-print(resultadoDos)
+resultado = huffman.huffman(extensionOrdenDos(vectorEstacionarioBa,matrizTransicionBa))
+longmediaBa=longitudMedia(extensionOrdenDos(vectorEstacionarioBa,matrizTransicionBa), resultado)  
+print(teoremaShannonMemoria(Hcondicional(matrizTransicionBa, vectorEstacionarioBa),longmediaBa,2,calcularEntropiaH1(matrizSinMemoriaBa)))      
+print("Shannon Bogota")
 huffman.codigos = {}
-simbolosOrdenUno = ordenUno(vectorEstacionarioVa)
-print(simbolosOrdenUno)
-simbolosOrdenDos = extensionOrdenDos(vectorEstacionarioVa, matrizTransicionVa)
-print(simbolosOrdenDos)
-print('longitudMediaOrdenUno Vancouver: ' + str(longitudMedia(simbolosOrdenUno, resultado)))
-print('longitudMediaOrdenDos Vancouver: ' + str(longitudMedia(simbolosOrdenDos, resultadoDos)))
-
-
-
-
-
-
-
-
-
-
-
-
-
+resultado = huffman.huffman(extensionOrdenDos(vectorEstacionarioBo,matrizTransicionBo))
+longmediaBo=longitudMedia(extensionOrdenDos(vectorEstacionarioBo,matrizTransicionBo), resultado)  
+print(teoremaShannonMemoria(Hcondicional(matrizTransicionBo, vectorEstacionarioBo),longmediaBo,2,calcularEntropiaH1(matrizSinMemoriaBo))) 
+print("Shannon Vancouver")
+huffman.codigos = {}
+resultado = huffman.huffman(extensionOrdenDos(vectorEstacionarioVa,matrizTransicionVa))
+longmediaVa=longitudMedia(extensionOrdenDos(vectorEstacionarioVa,matrizTransicionVa), resultado)  
+print(teoremaShannonMemoria(Hcondicional(matrizTransicionVa, vectorEstacionarioVa),longmediaVa,2,calcularEntropiaH1(matrizSinMemoriaVa)))
+print('\n')

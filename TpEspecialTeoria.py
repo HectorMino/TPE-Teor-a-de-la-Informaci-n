@@ -266,6 +266,7 @@ def impresionLongitudMedia(vectorEstacionario, matrizTransicion):
     resultadoDos = huffman.huffman(extensionOrdenDos(vectorEstacionario,matrizTransicion))
     simbolosOrdenUno = ordenUno(vectorEstacionario)
     simbolosOrdenDos = extensionOrdenDos(vectorEstacionario, matrizTransicion)
+    huffman.codigos = {}
 
     return "Longitud Media: " + str(longitudMedia(simbolosOrdenUno, resultado)) +"\nLongitud Media Orden Dos: "+ str(longitudMedia(simbolosOrdenDos, resultadoDos))
 
@@ -370,7 +371,7 @@ cantBB_Vancouver, cantBM_Vancouver, cantBA_Vancouver, cantMB_Vancouver, cantMM_V
 print('cantBB:', cantBB_Vancouver, 'cantBM:', cantBM_Vancouver, 'cantBA:', cantBA_Vancouver, 'cantMB:', cantMB_Vancouver, 'cantMM:', cantMM_Vancouver, 'cantMA:', cantMA_Vancouver, 'cantAB:', cantAB_Vancouver, 'cantAM:', cantAM_Vancouver, 'cantAA:', cantAA_Vancouver)
 
 def teoremaShannonSinMemoria(logMedia,cantMuestra,h1):
-    #print(h1+'<'+logMedia/cantMuestra+'<'+(h1+1/cantMuestra))
+    print(h1, ' <= ', logMedia/cantMuestra, ' < ', h1 + 1/cantMuestra)
     if(h1<logMedia/cantMuestra<h1+1/cantMuestra):
         return True
     return False
@@ -378,7 +379,7 @@ def teoremaShannonSinMemoria(logMedia,cantMuestra,h1):
 def teoremaShannonMemoria(hCond,logMedia,cantMuestra,h1):
     desigualdadIzq= h1/cantMuestra+(1-1/cantMuestra)*hCond
     desigualdadDer=h1/cantMuestra+(1-1/cantMuestra)*hCond+1/cantMuestra
-    #print(desigualdadIzq+'<='+logMedia/cantMuestra+'<'+desigualdadDer)
+    print(desigualdadIzq, ' <= ', logMedia/cantMuestra, ' < ', desigualdadDer)
     if(desigualdadIzq<logMedia/cantMuestra<desigualdadDer):
         return True
     return False
@@ -386,39 +387,28 @@ def teoremaShannonMemoria(hCond,logMedia,cantMuestra,h1):
 #---------------------------CORROBORANDO SHANNON SIN MEMORIA------------------------#
 print("Shannon sin memoria")
 print("Shannon Buenos aires")
+print(teoremaShannonSinMemoria(longitudMedia(ordenUno(vectorEstacionarioBa), huffman.huffman(ordenUno(vectorEstacionarioBa))) ,1,calcularEntropiaH1(matrizSinMemoriaBa)))      
+
+print("\nShannon Bogota")
 huffman.codigos = {}
-resultado = huffman.huffman(ordenUno(vectorEstacionarioBa))
-print(resultado)
-longmediaBa=longitudMedia(ordenUno(vectorEstacionarioBa), resultado)  
-print(teoremaShannonSinMemoria(longmediaBa,1,calcularEntropiaH1(matrizSinMemoriaBa)))      
-print("Shannon Bogota")
+print(teoremaShannonSinMemoria(longitudMedia(ordenUno(vectorEstacionarioBo), huffman.huffman(ordenUno(vectorEstacionarioBo))) ,1,calcularEntropiaH1(matrizSinMemoriaBo))) 
+
+print("\nShannon Vancouver")
 huffman.codigos = {}
-resultado = huffman.huffman(ordenUno(vectorEstacionarioBo))
-print(resultado)
-longmediaBo=longitudMedia(ordenUno(vectorEstacionarioBo), resultado)  
-print(teoremaShannonSinMemoria(longmediaBo,1,calcularEntropiaH1(matrizSinMemoriaBo))) 
-print("Shannon Vancouver")
-huffman.codigos = {}
-resultado = huffman.huffman(ordenUno(vectorEstacionarioVa))
-print(resultado)
-longmediaVa=longitudMedia(ordenUno(vectorEstacionarioVa), resultado)  
-print(teoremaShannonSinMemoria(longmediaVa,1,calcularEntropiaH1(matrizSinMemoriaVa)))
+
+print(teoremaShannonSinMemoria(longitudMedia(ordenUno(vectorEstacionarioVa), huffman.huffman(ordenUno(vectorEstacionarioVa))) ,1,calcularEntropiaH1(matrizSinMemoriaVa)))
 print('\n')
 #--------------------------------CORROBORANDO SHANNON CON MEMORIA (y orden 2)-----------------------
 print("Shannon con memoria")
 print("Shannon Buenos aires")
 huffman.codigos = {}
-resultado = huffman.huffman(extensionOrdenDos(vectorEstacionarioBa,matrizTransicionBa))
-longmediaBa=longitudMedia(extensionOrdenDos(vectorEstacionarioBa,matrizTransicionBa), resultado)  
-print(teoremaShannonMemoria(Hcondicional(matrizTransicionBa, vectorEstacionarioBa),longmediaBa,2,calcularEntropiaH1(matrizSinMemoriaBa)))      
-print("Shannon Bogota")
+print(teoremaShannonMemoria(Hcondicional(matrizTransicionBa, vectorEstacionarioBa),longitudMedia(extensionOrdenDos(vectorEstacionarioBa,matrizTransicionBa), huffman.huffman(extensionOrdenDos(vectorEstacionarioBa,matrizTransicionBa)))  ,2,calcularEntropiaH1(matrizSinMemoriaBa)))      
+
+print("\nShannon Bogota")
 huffman.codigos = {}
-resultado = huffman.huffman(extensionOrdenDos(vectorEstacionarioBo,matrizTransicionBo))
-longmediaBo=longitudMedia(extensionOrdenDos(vectorEstacionarioBo,matrizTransicionBo), resultado)  
-print(teoremaShannonMemoria(Hcondicional(matrizTransicionBo, vectorEstacionarioBo),longmediaBo,2,calcularEntropiaH1(matrizSinMemoriaBo))) 
-print("Shannon Vancouver")
+print(teoremaShannonMemoria(Hcondicional(matrizTransicionBo, vectorEstacionarioBo),longitudMedia(extensionOrdenDos(vectorEstacionarioBo,matrizTransicionBo), huffman.huffman(extensionOrdenDos(vectorEstacionarioBo,matrizTransicionBo))),2,calcularEntropiaH1(matrizSinMemoriaBo))) 
+
+print("\nShannon Vancouver")
 huffman.codigos = {}
-resultado = huffman.huffman(extensionOrdenDos(vectorEstacionarioVa,matrizTransicionVa))
-longmediaVa=longitudMedia(extensionOrdenDos(vectorEstacionarioVa,matrizTransicionVa), resultado)  
-print(teoremaShannonMemoria(Hcondicional(matrizTransicionVa, vectorEstacionarioVa),longmediaVa,2,calcularEntropiaH1(matrizSinMemoriaVa)))
+print(teoremaShannonMemoria(Hcondicional(matrizTransicionVa, vectorEstacionarioVa),longitudMedia(extensionOrdenDos(vectorEstacionarioVa,matrizTransicionVa), huffman.huffman(extensionOrdenDos(vectorEstacionarioVa,matrizTransicionVa))) ,2,calcularEntropiaH1(matrizSinMemoriaVa)))
 print('\n')

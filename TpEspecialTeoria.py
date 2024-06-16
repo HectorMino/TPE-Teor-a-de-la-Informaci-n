@@ -4,6 +4,8 @@ import pandas as pd
 import numpy as np
 import vectorEstacionario
 import huffman
+import random
+
 
 def calcular_media(numeros):
     suma = sum(numeros)
@@ -44,11 +46,12 @@ def escribir_csv_con_categorias(input_filename, output_filename):
 archivo_csv1 = "S1_buenosAires.csv"
 archivo_csv2 = "S2_bogota.csv"  
 archivo_csv3 = "S3_vancouver.csv"  
+archivo_csv4 = "S4_buenosAiresR.csv"  
 
 datos1 = leer_csv(archivo_csv1)
 datos2 = leer_csv(archivo_csv2)
 datos3 = leer_csv(archivo_csv3)
-
+datos4 = leer_csv(archivo_csv4)
 # Calcular media y desvío estándar para cada conjunto de datos
 medias = [calcular_media(datos) for datos in [datos1, datos2, datos3]]
 desvios = [calcular_desvio(datos, media) for datos, media in zip([datos1, datos2, datos3], medias)]
@@ -412,3 +415,149 @@ print("\nShannon Vancouver")
 huffman.codigos = {}
 print(teoremaShannonMemoria(Hcondicional(matrizTransicionVa, vectorEstacionarioVa),longitudMedia(extensionOrdenDos(vectorEstacionarioVa,matrizTransicionVa), huffman.huffman(extensionOrdenDos(vectorEstacionarioVa,matrizTransicionVa))) ,2,calcularEntropiaH1(matrizSinMemoriaVa)))
 print('\n')
+
+
+
+#---------------------------------------------------------------EJERCICIO 3-------------------------------------------------------------------------------------
+def getMatrizCanal(archivoEntrada, archivoSalida):
+    matriz = [[0, 0, 0],[0, 0, 0],[0, 0, 0]]
+    dfEntrada = pd.read_csv(archivoEntrada, header=None, names=['estado'])
+    dfSalida = pd.read_csv(archivoSalida, header=None, names=['estado'])
+    sumaColumnaB = 0
+    sumaColumnaM = 0
+    sumaColumnaA = 0
+
+    for i in range(0, len(dfEntrada['estado'])):
+        if(dfEntrada['estado'][i] == "B"):
+            sumaColumnaB += 1
+            if(dfSalida['estado'][i] == "B"):
+                matriz[0][0] += 1
+            elif(dfSalida['estado'][i] == "M"):
+                matriz[1][0] += 1
+            else: matriz[2][0] += 1
+
+        elif(dfEntrada['estado'][i] == "M"):
+            sumaColumnaM += 1
+
+            if(dfSalida['estado'][i] == "B"):
+                matriz[0][1] += 1
+            elif(dfSalida['estado'][i] == "M"):
+                matriz[1][1] += 1
+            else: matriz[2][1] += 1
+        else:
+            sumaColumnaA += 1
+
+            if(dfSalida['estado'][i] == "B"):
+                matriz[0][2] += 1
+            elif(dfSalida['estado'][i] == "M"):
+                matriz[1][2] += 1
+            else: matriz[2][2] += 1
+
+    for i in range(0,3):
+        for j in range(0,3):
+            if(j == 0):
+                matriz[i][j] = matriz[i][j]/sumaColumnaB
+            elif(j == 1):
+                matriz[i][j] = matriz[i][j]/sumaColumnaM
+            else:
+                matriz[i][j] = matriz[i][j]/sumaColumnaA
+
+
+        
+    return(matriz)
+
+
+def getRuido(matrizCanal, probabilidadEntrada):
+    columnas = [0,0,0]
+    for j in range(0,3):
+        for i in range(0,3):
+            if (matrizCanal[i][j] != 0):
+                columnas[j] +=  matrizCanal[i][j]*math.log2(matrizCanal[i][j])
+
+        columnas[j] *= -probabilidadEntrada[j]
+
+    return (columnas[0]+columnas[1]+columnas[2])
+    
+matrizCanal = getMatrizCanal('S1_buenosAires_categorizadas.csv', 'S4_buenosAiresR_categorizadas.csv')
+    
+print(getRuido(matrizCanal, matrizSinMemoriaBa))
+
+def getHY(probabilidad):
+
+    hY = 0
+    for i in range(len(probabilidad)):
+        hY += probabilidad[i]*math.log2(probabilidad[i])
+
+    return (-hY)
+
+
+def getInformacionMutua(hY, ruidoCanal):
+    return hY - ruidoCanal
+
+hY = getHY(getMatrizSinMemoria('S4_buenosAiresR_categorizadas.csv'))
+ruido = getRuido(matrizCanal, matrizSinMemoriaBa)
+
+print(getInformacionMutua(hY, ruido))
+
+
+epsilon = 0.00005
+N_Pruebas_Min = 100000
+
+
+def primer_Simbolo ():
+    r=random.random()
+    i = 0
+    v0Acum = [1,1,1]
+    for i in range (3):
+        if (r < v0Acum [i]):
+            return i
+ 
+def sig_dado_Ant (s_ant, mAcum):
+    r=random.random()
+    i = 0
+
+    for i in range (3):
+        if ( r < mAcum[i][s_ant] ):
+            return i 
+ 
+
+def convergeValor (A, B) -> bool:
+  
+    if (abs(A - B) > epsilon ):
+           return False 
+    return True
+
+def media_recurrencia (simbolo, N, mAcumulada):
+    exitos = 0         #retornos a si 
+    media = 0           #media recurrencia actual
+    media_ant = -1  #media recurrencia anterior
+    t_actual = 0   
+    while  not convergeValor (media, media_ant) or (t_actual<N_Pruebas_Min): 
+        pasos = 1
+        s= sig_dado_Ant(simbolo, mAcumulada)
+        t_actual+=1
+
+        while (s != simbolo):
+            s = sig_dado_Ant(s, mAcumulada)
+            pasos += 1
+        if (pasos <= N):   # hay retorno
+            exitos += 1
+            
+            media_ant= media
+            media= exitos/t_actual
+          
+      
+    return media
+
+
+def getMatrizAcumulada(matriz):
+    copia = matriz
+    for j in range(3):
+        suma = 0
+        for i in range(3):
+            suma += matriz[i][j]
+            copia[i][j] = suma
+    return copia
+
+print("probabilidad de que entre dos apariciones consecutivas de un mismo símbolo j a la salida del canal")
+print(media_recurrencia(0, 2, getMatrizAcumulada(matrizCanal)))

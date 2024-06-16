@@ -5,6 +5,7 @@ import numpy as np
 import vectorEstacionario
 import huffman
 import random
+import matplotlib.pyplot as plt
 
 
 def calcular_media(numeros):
@@ -532,6 +533,7 @@ def media_recurrencia (simbolo, N, mAcumulada):
     media = 0           #media recurrencia actual
     media_ant = -1  #media recurrencia anterior
     t_actual = 0   
+    probabilidades = []
     while  not convergeValor (media, media_ant) or (t_actual<N_Pruebas_Min): 
         pasos = 1
         s= sig_dado_Ant(simbolo, mAcumulada)
@@ -545,9 +547,10 @@ def media_recurrencia (simbolo, N, mAcumulada):
             
             media_ant= media
             media= exitos/t_actual
+            probabilidades.append(media)
           
       
-    return media
+    return media,probabilidades
 
 
 def getMatrizAcumulada(matriz):
@@ -559,5 +562,14 @@ def getMatrizAcumulada(matriz):
             copia[i][j] = suma
     return copia
 
-print("probabilidad de que entre dos apariciones consecutivas de un mismo símbolo j a la salida del canal")
-print(media_recurrencia(0, 2, getMatrizAcumulada(matrizCanal)))
+print("Probabilidad de que entre dos apariciones consecutivas de un mismo símbolo j a la salida del canal")
+media, probabilidades = media_recurrencia(0, 2, getMatrizAcumulada(matrizCanal))
+print("Media:", media)
+
+# Graficar las probabilidades
+plt.plot(probabilidades)
+plt.xlabel('Número de simulaciones')
+plt.ylabel('Probabilidad')
+plt.title('Convergencia de la probabilidad')
+plt.grid(True)
+plt.show()

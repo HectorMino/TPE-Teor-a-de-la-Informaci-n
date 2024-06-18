@@ -497,7 +497,8 @@ def getInformacionMutua(hY, ruidoCanal):
 
 hY = getHY(getMatrizSinMemoria('S4_buenosAiresR_categorizadas.csv'))
 ruido = getRuido(matrizCanal, matrizSinMemoriaBa)
-
+print('Ruido')
+print(ruido)
 print(getInformacionMutua(hY, ruido))
 
 
@@ -563,7 +564,7 @@ def getMatrizAcumulada(matriz):
     return copia
 
 print("Probabilidad de que entre dos apariciones consecutivas de un mismo símbolo j a la salida del canal")
-media, probabilidades = media_recurrencia(0, 2, getMatrizAcumulada(matrizCanal))
+media, probabilidades = media_recurrencia(2,2, getMatrizAcumulada(matrizCanal))
 print("Media:", media)
 
 # Graficar las probabilidades

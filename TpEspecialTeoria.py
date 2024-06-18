@@ -129,8 +129,6 @@ print("\nMatriz Transicion Vancouver:")
 print(matrizTransicionVaVisible)
 print()
 
-
-
 def getMatrizSinMemoria(nombre_archivo):
     matrizSinMemoria = [0, 0, 0]
     df = pd.read_csv(nombre_archivo, header=None, names=['estado'])
@@ -497,21 +495,14 @@ def getInformacionMutua(hY, ruidoCanal):
 
 hY = getHY(getMatrizSinMemoria('S4_buenosAiresR_categorizadas.csv'))
 ruido = getRuido(matrizCanal, matrizSinMemoriaBa)
-
+print('Ruido')
+print(ruido)
 print(getInformacionMutua(hY, ruido))
 
 
 epsilon = 0.00005
 N_Pruebas_Min = 100000
 
-
-def primer_Simbolo ():
-    r=random.random()
-    i = 0
-    v0Acum = [1,1,1]
-    for i in range (3):
-        if (r < v0Acum [i]):
-            return i
  
 def sig_dado_Ant (s_ant, mAcum):
     r=random.random()
@@ -520,7 +511,14 @@ def sig_dado_Ant (s_ant, mAcum):
     for i in range (3):
         if ( r < mAcum[i][s_ant] ):
             return i 
- 
+
+def simboloAleatorio(vector):
+    r = random.random()
+    i = 0
+    
+    for i in range(3):
+        if (r < vector[i]):
+            return i
 
 def convergeValor (A, B) -> bool:
   
@@ -528,30 +526,42 @@ def convergeValor (A, B) -> bool:
            return False 
     return True
 
-def media_recurrencia (simbolo, N, mAcumulada):
+def media_recurrencia (simbolo, N, mAcumulada, vectorEstacionarioEntrada):
     exitos = 0         #retornos a si 
     media = 0           #media recurrencia actual
     media_ant = -1  #media recurrencia anterior
     t_actual = 0   
     probabilidades = []
     while  not convergeValor (media, media_ant) or (t_actual<N_Pruebas_Min): 
-        pasos = 1
-        s= sig_dado_Ant(simbolo, mAcumulada)
+        pasos = 0
+        sEntrada = simboloAleatorio(vectorEstacionarioEntrada)
+        sSalida = sig_dado_Ant(sEntrada, mAcumulada)
+
         t_actual+=1
 
-        while (s != simbolo):
-            s = sig_dado_Ant(s, mAcumulada)
+        while (sSalida != simbolo):
+            sEntrada = simboloAleatorio(vectorEstacionarioEntrada)
+            sSalida = sig_dado_Ant(sEntrada, mAcumulada)
             pasos += 1
         if (pasos <= N):   # hay retorno
             exitos += 1
             
-            media_ant= media
-            media= exitos/t_actual
+            media_ant = media
+            media = exitos/t_actual
             probabilidades.append(media)
           
-      
     return media,probabilidades
 
+def vectorEstacionarioAcumulado(vectorEstacionario):
+    copia = []
+    
+    for j in range(len(vectorEstacionario)):
+        copia.append(vectorEstacionario[j])
+    i = 1
+    while (i < len(vectorEstacionario)):
+        copia[i] = copia[i-1]+copia[i]
+        i+=1
+    return copia
 
 def getMatrizAcumulada(matriz):
     copia = matriz
@@ -560,10 +570,12 @@ def getMatrizAcumulada(matriz):
         for i in range(3):
             suma += matriz[i][j]
             copia[i][j] = suma
+    print(copia[0], "\n", copia[1], "\n", copia[2])
     return copia
 
 print("Probabilidad de que entre dos apariciones consecutivas de un mismo símbolo j a la salida del canal")
-media, probabilidades = media_recurrencia(0, 2, getMatrizAcumulada(matrizCanal))
+print("Vector Estacionario: ", vectorEstacionarioAcumulado(vectorEstacionarioBa))
+media, probabilidades = media_recurrencia(2,1, getMatrizAcumulada(matrizCanal), vectorEstacionarioAcumulado(vectorEstacionarioBa))
 print("Media:", media)
 
 # Graficar las probabilidades

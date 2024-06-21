@@ -526,7 +526,7 @@ def convergeValor (A, B) -> bool:
            return False 
     return True
 
-def media_recurrencia (simbolo, N, mAcumulada, vectorEstacionarioEntrada):
+def media_recurrencia (simbolo, N, mAcumuladaCanal, vectorEstacionarioEntrada, mAcumuladaEntrada):
     exitos = 0         #retornos a si 
     media = 0           #media recurrencia actual
     media_ant = -1  #media recurrencia anterior
@@ -534,14 +534,16 @@ def media_recurrencia (simbolo, N, mAcumulada, vectorEstacionarioEntrada):
     probabilidades = []
     while  not convergeValor (media, media_ant) or (t_actual<N_Pruebas_Min): 
         pasos = 0
-        sEntrada = simboloAleatorio(vectorEstacionarioEntrada)
-        sSalida = sig_dado_Ant(sEntrada, mAcumulada)
+        sInicial = simboloAleatorio(vectorEstacionarioEntrada)
+        sEntrada = sig_dado_Ant(sInicial, mAcumuladaEntrada)
+        sSalida = sig_dado_Ant(sEntrada, mAcumuladaCanal)
 
         t_actual+=1
 
         while (sSalida != simbolo):
-            sEntrada = simboloAleatorio(vectorEstacionarioEntrada)
-            sSalida = sig_dado_Ant(sEntrada, mAcumulada)
+            sInicial = simboloAleatorio(vectorEstacionarioEntrada)
+            sEntrada = sig_dado_Ant(sInicial, mAcumuladaEntrada)
+            sSalida = sig_dado_Ant(sEntrada, mAcumuladaCanal)
             pasos += 1
         if (pasos <= N):   # hay retorno
             exitos += 1
@@ -575,7 +577,7 @@ def getMatrizAcumulada(matriz):
 
 print("Probabilidad de que entre dos apariciones consecutivas de un mismo símbolo j a la salida del canal")
 print("Vector Estacionario: ", vectorEstacionarioAcumulado(vectorEstacionarioBa))
-media, probabilidades = media_recurrencia(2,1, getMatrizAcumulada(matrizCanal), vectorEstacionarioAcumulado(vectorEstacionarioBa))
+media, probabilidades = media_recurrencia(2,1, getMatrizAcumulada(matrizCanal), vectorEstacionarioAcumulado(vectorEstacionarioBa), matriz_acumulada_ba)
 print("Media:", media)
 
 # Graficar las probabilidades
